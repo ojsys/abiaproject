@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 
-CHOICES = (
+GENDER_CHOICES = (
     ('Male', 'Male'),
     ('Female', 'Female'),
 )
@@ -36,3 +36,23 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(email, password, **extra_fields)
 
+
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    gender = models.CharField(max_length=255, choices=GENDER_CHOICES)
+    department = models.CharField(max_length=255, null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        return self.firstname + self.email
+    
